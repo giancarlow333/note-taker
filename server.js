@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const theNotes = require('./db/db.json');
 
-const PORT = 3001;
+const PORT = Process.env.PORT;
 const app = express();
 app.use(express.static('./public'));
 app.use(express.json());
