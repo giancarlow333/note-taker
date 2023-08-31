@@ -1,6 +1,7 @@
 // import required packages
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const theNotes = require('./db/db.json');
 
 const PORT = 3001;
@@ -43,6 +44,33 @@ app.post('/api/notes', (req, res) => {
       status: 'success',
       body: newNote,
     };
+
+    // Read existing data
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+      if(err) {
+        console.log(err);
+      }
+      else {
+        const existingNotes = JSON.parse(data);
+
+        // Append the new note
+        existingNotes.push(newNote);
+        
+        // String to write
+        const noteString = JSON.stringify(existingNotes);
+
+        // Write the string to a file
+        fs.writeFile(`./db/db.json`, noteString, (err) =>
+          err
+            ? console.error(err)
+            : console.log(
+                `Note has been written to JSON file`
+              )
+        );
+      }
+    });
+
+    
   
     console.log(response);
     res.status(201).json(response);
