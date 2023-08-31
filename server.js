@@ -28,7 +28,6 @@ app.get('/api/notes', function (req, res) {
     }
     else {
       res.status(200).json(JSON.parse(data));
-      console.log(data);
     }
   });
 });
@@ -38,7 +37,6 @@ app.post('/api/notes', (req, res) => {
   console.info(`${req.method} request received to add a note`);
   
   // Destructuring assignment for the items in req.body
-  console.log(`Request body: ${req.body}`);
   const { title, text } = req.body;
   
   // If all the required properties are present
@@ -60,7 +58,6 @@ app.post('/api/notes', (req, res) => {
         console.log(err);
       }
       else {
-        console.log(data);
         const existingNotes = JSON.parse(data);
 
         // Append the new note
