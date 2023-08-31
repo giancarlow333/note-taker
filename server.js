@@ -2,9 +2,9 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const theNotes = require('./db/db.json');
 
-const PORT = process.env.PORT;
+//const PORT = process.env.PORT;
+const PORT = 3001;
 const app = express();
 app.use(express.static('./public'));
 app.use(express.json());
@@ -21,7 +21,16 @@ app.get('/notes', (req, res) => {
 // set up API routes
 app.get('/api/notes', function (req, res) {
   console.info(`GET /api/notes`);
-  res.status(200).json(theNotes);
+  // Read existing data
+  fs.readFile('./db/db.json', 'utf8', (err, data) => {
+    if(err) {
+      console.log(err);
+    }
+    else {
+      res.status(200).json(JSON.parse(data));
+      console.log(data);
+    }
+  });
 });
 
 app.post('/api/notes', (req, res) => {
@@ -51,6 +60,7 @@ app.post('/api/notes', (req, res) => {
         console.log(err);
       }
       else {
+        console.log(data);
         const existingNotes = JSON.parse(data);
 
         // Append the new note
@@ -60,20 +70,19 @@ app.post('/api/notes', (req, res) => {
         const noteString = JSON.stringify(existingNotes);
 
         // Write the string to a file
-        fs.writeFile(`./db/db.json`, noteString, (err) =>
-          err
-            ? console.error(err)
-            : console.log(
-                `Note has been written to JSON file`
-              )
+        fs.writeFile(`./db/db.json`, noteString, (err) => {
+          if(err) {
+            console.error(err)
+          }
+          else {
+            console.log(`Note has been written to JSON file`);
+            res.status(201).json(response);
+            }
+          }
         );
       }
     });
-
-    
-  
     console.log(response);
-    res.status(201).json(response);
   } else {
     res.status(500).json('Error in posting note');
   }
